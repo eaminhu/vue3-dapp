@@ -1,0 +1,62 @@
+{
+  "name": "web3-demo",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "@bitski/provider-engine": "^0.7.0-beta.2",
+    "@toruslabs/torus-embed": "^1.24.2",
+    "@types/web3": "^1.2.2",
+    "@walletconnect/web3-provider": "^1.7.8",
+    "authereum": "^0.1.14",
+    "autoprefixer": "9",
+    "bitski": "^0.15.0",
+    "core-js": "^3.8.3",
+    "fortmatic": "^2.4.0",
+    "postcss": "7",
+    "register-service-worker": "^1.7.2",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat",
+    "vue": "^3.2.13",
+    "walletconnect": "^1.7.8",
+    "web3": "^1.7.3",
+    "web3modal": "^1.9.8"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-plugin-pwa": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "@vue/compiler-sfc": "^3.0.0",
+    "@vue/eslint-config-airbnb": "^5.0.2",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^6.7.2",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-vue": "^7.0.0",
+    "vue-cli-plugin-tailwind": "~3.0.0",
+    "vue-cli-plugin-web3modal": "~1.1.0"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/vue3-essential",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "parser": "@babel/eslint-parser"
+    },
+    "rules": {}
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead",
+    "not ie 11"
+  ]
+}
