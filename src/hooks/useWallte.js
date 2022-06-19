@@ -5,6 +5,7 @@ import Web3, { utils } from 'web3';
 import Web3Modal from 'web3modal';
 import { getChainData } from '@/web3/tools';
 import { providerOptions } from '@/web3/config';
+import { ElMessage } from 'element-plus'
 
 const INITIAL_STATE = {
   web3: null,
@@ -12,7 +13,8 @@ const INITIAL_STATE = {
   userAddress: '',
   connected: false,
   chainId: 1,
-  networkId: 1,
+  networkId: '1',
+  loading: false
 };
 
 export default function UseWallet() {
@@ -44,15 +46,26 @@ export default function UseWallet() {
     });
     _this.$forceUpdate();
   };
-  const getUserBalance = () => walletObj.web3.eth
-    .getBalance(walletObj.userAddress)
-    .then((res) => (res ? utils.fromWei(res.toString(), 'ether') : 0));
+
+  //查询余额
+  const getUserBalance = () => {
+    if (!walletObj.web3) return ElMessage.warning('未连接钱包')
+    walletObj.loading = true
+    return walletObj.web3.eth
+      .getBalance(walletObj.userAddress)
+      .then((res) => {
+        walletObj.loading = false
+        return utils.fromWei(res.toString(), 'ether') || 0
+      })
+  }
 
   const getAccountAssets = async () => {
     fetching.value = true;
     assets.value = await getUserBalance();
   };
+
   const subscribeProvider = async (provider) => {
+
     if (!provider.on) {
       return;
     }
@@ -65,13 +78,14 @@ export default function UseWallet() {
       walletObj.userAddress = accounts[0];
       await getAccountAssets();
     });
-    // provider.on('chainChanged', async (chainId) => {
-    // 	console.log('333', chainId);
-    // 	const networkId = await walletObj?.web3?.eth?.net.getId();
-    // 	walletObj.chainId = chainId;
-    // 	walletObj.networkId = networkId;
-    // 	await getAccountAssets();
-    // });
+    provider.on('chainChanged', async (chainId) => {
+      debugger
+      const networkId = await walletObj.web3.eth.net.getId()
+      walletObj.chainId = chainId
+      walletObj.networkId = networkId.toString()
+      await getAccountAssets()
+      _this.$forceUpdate()
+    });
   };
 
   const onConnect = async () => {
@@ -83,8 +97,8 @@ export default function UseWallet() {
     const accounts = await web3.eth.getAccounts();
 
     const address = accounts[0];
-
-    const networkId = await web3.eth.net.getId();
+    debugger
+    const networkId = await web3.eth.net.getId()
 
     const chainId = await web3.eth.getChainId();
 
@@ -93,7 +107,7 @@ export default function UseWallet() {
     walletObj.connected = true;
     walletObj.userAddress = address;
     walletObj.chainId = chainId;
-    walletObj.networkId = networkId;
+    walletObj.networkId = networkId.toString();
     await getAccountAssets();
   };
 
