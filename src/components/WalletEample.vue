@@ -2,7 +2,6 @@
     <div class="page-wrap">
         <!-- <h1 class="text-purple-600">Web3.js DEMO</h1> -->
         网络 &nbsp;&nbsp;
-
         <el-select
             ref="networkSelectRef"
             v-model="networkId"
@@ -18,14 +17,20 @@
                 :label="value.name"
                 :value="name"
             >
-                <p>{{ value.name }}</p>
+                <img
+                    class="icon-network"
+                    :src="value.networkLogoPath"
+                    alt=""
+                    srcset=""
+                />
+                {{ value.name }}
             </el-option>
         </el-select>
         <div>
             <button class="oper-btn" @click="handleWalletConnect">
                 连接钱包
             </button>
-            
+
             <button class="oper-btn" @click="getAccountAssets">
                 获取最新余额
             </button>
@@ -33,10 +38,7 @@
             <button class="oper-btn" @click="addToken">添加代币到钱包</button>
             <button class="oper-btn" @click="close">断开钱包</button>
         </div>
-        <div
-            class="mt-10 p-10 text-left w-1/2 m-auto border rounded-lg"
-            v-loading="loading"
-        >
+        <div class="result" v-loading="loading">
             <p>
                 Address:
                 {{ userAddress }}
@@ -234,11 +236,38 @@ const addToken = () => {
         .then(() => ElMessage.success('添加代币成功'))
         .catch((error) => console.log(error))
 }
+
+const getMarketHelpData = (marketName) => {
+    const testChains = [
+        'Kovan',
+        'Rinkeby',
+        'Ropsten',
+        'Mumbai',
+        'Fuji',
+        'Testnet'
+    ]
+    const arrayName = marketName.split(' ')
+    const testChainName = arrayName.filter((el) => testChains.indexOf(el) > -1)
+    const marketTitle = arrayName
+        .filter((el) => !testChainName.includes(el))
+        .join(' ')
+    return {
+        name: marketTitle,
+        testChainName: testChainName[0]
+    }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .oper-btn {
     @apply mt-10 mr-2 shadow px-5 h-7 font-thin bg-yellow-300 rounded-sm;
+}
+.icon-network {
+    display: inline-block;
+    @apply mr-1;
+}
+.result {
+    @apply bg-gray-50 shadow-xl mt-10 p-10 text-left w-1/2 m-auto border rounded-lg;
 }
 </style>

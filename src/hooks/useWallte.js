@@ -90,7 +90,7 @@ export default function UseWallet() {
 
 	const onConnect = async () => {
 		const provider = await web3Modal.connect();
-
+		console.log('provider', provider);
 		await subscribeProvider(provider);
 
 		const web3 = new Web3(provider);
