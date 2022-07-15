@@ -1,4 +1,4 @@
-基于 vue3 + web3.js + web3Modal + tailwindcss 的 DApp的Demo
+基于 vue3 + web3.js + web3Modal + Element Plus + tailwindcss 的 DApp 的Demo
 
 - [x] 连接钱包
 - [x] 切换网络
