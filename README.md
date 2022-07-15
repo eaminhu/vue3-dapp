@@ -1,10 +1,19 @@
-基于 vue3 + web3.js + tailwindcss 的 DApp的Demo
+基于 vue3 + web3.js + web3Modal + tailwindcss 的 DApp的Demo
+
+- [x] 切换网络
+- [x] 添加网络
+- [x] 获取余额
+- [x] 添加代币到钱包
+- [x] 转账
+- [x] 断开钱包
+- [x] 获取abi文件
 
 ![image](https://user-images.githubusercontent.com/12030736/174463359-c94aaa93-5750-4f95-95fb-8e766c0fceb6.png)
 ![image](https://user-images.githubusercontent.com/12030736/174463371-24519287-a198-46f4-af71-4c9bbb6ae17f.png)
 ![image](https://user-images.githubusercontent.com/12030736/174463381-89477ad3-dbe2-46c8-94a6-490d6435486b.png)
 
 # web3-demo
+
 
 ## Project setup
 ```
