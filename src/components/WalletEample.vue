@@ -35,8 +35,11 @@
                 获取最新余额
             </button>
             <button class="oper-btn" @click="transfer">转账</button>
-            <button class="oper-btn" @click="addToken">添加代币到钱包</button>
+            <button class="oper-btn" @click="getABI">获取 ABI 文件</button>
+               
+            <button class="oper-btn" @click="addToken">添加代币到小狐狸钱包</button>
             <button class="oper-btn" @click="close">断开钱包</button>
+            
         </div>
         <div class="result" v-loading="loading">
             <p>
@@ -55,6 +58,8 @@
                     >{{ output }}</a
                 >
             </p>
+            <p>ABI：{{abi}}</p>
+           
         </div>
     </div>
 
@@ -85,6 +90,7 @@ import { getChainData } from '@/web3/tools'
 import { providerOptions } from '@/web3/config'
 import networkConfigs from '../config/networkConfigs'
 import { ElMessage, ElMessageBox, ElNotification } from 'element-plus'
+import axios from 'axios'
 
 const {
     onConnect,
@@ -105,8 +111,9 @@ const networkSelectRef = ref(null)
 const dialogTableVisible = ref(false)
 const toAccount = ref('0xEd0f4bf5e21151dA45a1CA66Df30cbf695d92fBc')
 const amount = ref('')
+const abi = ref('')
 
-onConnect()
+//onConnect()
 
 const handleWalletConnect = async function () {
     await onConnect()
@@ -116,7 +123,6 @@ const close = async () => {
 }
 
 const getAccounts = async () => {
-    debugger
     const accounts = await web3.value.eth.getCoinbase()
     console.log(accounts)
 }
@@ -166,7 +172,9 @@ const transfer = () => {
 
 //切换网络
 const switchNetwork = (value) => {
+    
     const chainId = utils.toHex(value)
+
     window.ethereum &&
         window.ethereum
             .request({
@@ -256,6 +264,25 @@ const getMarketHelpData = (marketName) => {
         testChainName: testChainName[0]
     }
 }
+
+const getABI = () => {
+    //获取abi文件
+    var api =
+        'https://api.etherscan.io/api?module=contract&action=getabi&address=0xdac17f958d2ee523a2206206994597c13d831ec7'
+    axios
+        .get(api)
+        .then((res) => {
+            //请求成功的回调函数
+            if (res.status === 200) {
+                abi.value = JSON.parse(res.data.result)
+            }
+        })
+        .catch((err) => {
+            //请求失败的回调函数
+            console.log(err)
+        })
+}
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -268,6 +295,6 @@ const getMarketHelpData = (marketName) => {
     @apply mr-1;
 }
 .result {
-    @apply bg-gray-50 shadow-xl mt-10 p-10 text-left w-1/2 m-auto border rounded-lg;
+    @apply bg-gray-50 shadow-xl mt-10 p-10 text-left w-2/3 m-auto border rounded-lg;
 }
 </style>

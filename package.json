@@ -14,6 +14,7 @@
     "@walletconnect/web3-provider": "^1.7.8",
     "authereum": "^0.1.14",
     "autoprefixer": "9",
+    "axios": "^0.27.2",
     "bitski": "^0.15.0",
     "core-js": "^3.8.3",
     "element-plus": "^2.2.6",
@@ -22,9 +23,10 @@
     "register-service-worker": "^1.7.2",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat",
     "vue": "^3.2.13",
+    "vue-router": "^4.0.6",
     "walletconnect": "^1.7.8",
     "web3": "^1.7.3",
-    "web3modal": "^1.9.8"
+    "web3modal": "^1.9.4"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

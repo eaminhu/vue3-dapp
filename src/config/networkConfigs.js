@@ -13,7 +13,8 @@ export default
             "baseAssetDecimals": 18,
             "explorerLink": "https://etherscan.io",
             "ratesHistoryApiUrl": "https://aave-api-v2.aave.com/data/rates-history",
-            "networkLogoPath": "/icons/networks/ethereum.svg"
+            "networkLogoPath": "/icons/networks/ethereum.svg",
+            "infuraName": 'mainnet'
         },
         "3": {
             "name": "Ropsten Testnet",
@@ -27,7 +28,8 @@ export default
             "baseAssetDecimals": 18,
             "explorerLink": "https://ropsten.etherscan.io",
             "isTestnet": true,
-            "networkLogoPath": "/icons/networks/ethereum.svg"
+            "networkLogoPath": "/icons/networks/ethereum.svg",
+            "infuraName": 'ropsten'
         },
         "4": {
             "name": "Rinkeby",
@@ -40,7 +42,9 @@ export default
             "baseAssetDecimals": 18,
             "explorerLink": "https://rinkeby.etherscan.io/",
             "isTestnet": true,
-            "networkLogoPath": "/icons/networks/ethereum.svg"
+            "networkLogoPath": "/icons/networks/ethereum.svg",
+            "infuraName": 'rinkeby'
+
         },
         "10": {
             "name": "Optimism",
@@ -72,7 +76,8 @@ export default
             "baseAssetDecimals": 18,
             "explorerLink": "https://kovan.etherscan.io",
             "isTestnet": true,
-            "networkLogoPath": "/icons/networks/ethereum.svg"
+            "networkLogoPath": "/icons/networks/ethereum.svg",
+            "infuraName": 'kovan'
         },
         "69": {
             "name": "Optimism Testnet",
@@ -109,7 +114,8 @@ export default
                 "name": "Polygon PoS Bridge",
                 "url": "https://wallet.matic.network/bridge/"
             },
-            "ratesHistoryApiUrl": "https://aave-api-v2.aave.com/data/rates-history"
+            "ratesHistoryApiUrl": "https://aave-api-v2.aave.com/data/rates-history",
+            "infuraName": "Polygon"
         },
         "250": {
             "name": "Fantom",
