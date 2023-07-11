@@ -1,47 +1,73 @@
 <template>
-    <div class="page-wrap">
+    <div class='page-wrap'>
         <!-- <h1 class="text-purple-600">Web3.js DEMO</h1> -->
         网络 &nbsp;&nbsp;
         <el-select
-            ref="networkSelectRef"
-            v-model="networkId"
-            placeholder="请选择"
+            ref='networkSelectRef'
+            v-model='networkId'
             clearable
             filterable
-            @change="switchNetwork"
+            placeholder='请选择'
+            @change='switchNetwork'
         >
             <el-option
-                width="100"
-                v-for="(value, name) in networkConfigs"
-                :key="value"
-                :label="value.name"
-                :value="name"
+                v-for='(value, name) in networkConfigs'
+                :key='value'
+                :label='value.name'
+                :value='name'
+                width='100'
             >
                 <img
-                    class="icon-network"
-                    :src="value.networkLogoPath"
-                    alt=""
-                    srcset=""
+                    alt=''
+                    class='icon-network'
+                    :src='value.networkLogoPath'
+                    srcset=''
                 />
                 {{ value.name }}
             </el-option>
         </el-select>
         <div>
-            <button class="oper-btn" @click="handleWalletConnect">
+            <button class='oper-btn' @click='handleWalletConnect'>
                 连接钱包
             </button>
 
-            <button class="oper-btn" @click="getAccountAssets">
+            <button class='oper-btn' @click='getAccountAssets'>
                 获取最新余额
             </button>
-            <button class="oper-btn" @click="transfer">转账</button>
-            <button class="oper-btn" @click="getABI">获取 ABI 文件</button>
+            <button class='oper-btn' @click='transfer'>
+                转账
+            </button>
+            <button class='oper-btn' @click='getABI'>
+                获取 ABI 文件
+            </button>
                
-            <button class="oper-btn" @click="addToken">添加代币到小狐狸钱包</button>
-            <button class="oper-btn" @click="close">断开钱包</button>
-            
+            <button class='oper-btn' @click='addToken'>
+                添加代币到小狐狸钱包
+            </button>
+            <button class='oper-btn' @click='close'>
+                断开钱包
+            </button>
         </div>
-        <div class="result" v-loading="loading">
+        <div>
+            <button class='oper-btn' @click='sign'>
+                签名
+            </button>
+        </div>
+        <div class='w-6/12 mr-auto ml-auto mt-9'>
+            <el-input
+                v-model='sendData'
+                maxlength='5000'
+                placeholder='请输入data'
+                rows='8'
+                show-word-limit
+                type='textarea'
+            />
+            <button class='oper-btn' @click='sendTransaction'>
+                发送交易
+            </button>
+        </div>
+
+        <div v-loading='loading' class='result'>
             <p>
                 Address:
                 {{ userAddress }}
@@ -49,33 +75,39 @@
             <p>balance: {{ assets }}</p>
             <p>networkId: {{ networkId }}</p>
             <p>chainId: {{ chainId }}</p>
+            <p>signature: {{ signature }}</p>
             <p>
                 TxHASH:
                 <a
-                    class="text-blue-600"
+                    class='text-blue-600'
                     :href="'https://ropsten.etherscan.io/tx/' + output"
-                    target="_blank"
-                    >{{ output }}</a
+                    target='_blank'
                 >
+                    {{ output }}
+                </a>
             </p>
-            <p>ABI：{{abi}}</p>
-           
+            <p>ABI：{{ abi }}</p>
         </div>
     </div>
 
-    <el-dialog v-model="dialogTableVisible" title="转账" width="30%">
-        <el-form-item label="钱包地址" :label-width="100">
-            <el-input v-model="toAccount" autocomplete="off" />
+    <el-dialog v-model='dialogTableVisible' title='转账' width='30%'>
+        <el-form-item label='钱包地址' :label-width='100'>
+            <el-input v-model='toAccount' autocomplete='off' />
         </el-form-item>
-        <el-form-item label="金额" :label-width="100">
-            <el-input type="number" v-model="amount" autocomplete="off" />
+        <el-form-item label='金额' :label-width='100'>
+            <el-input v-model='amount' autocomplete='off' type='number' />
         </el-form-item>
         <template #footer>
-            <span class="dialog-footer">
-                <el-button @click="dialogTableVisible = false">取消</el-button>
-                <el-button type="primary" @click="handleTransfer"
-                    >确定</el-button
+            <span class='dialog-footer'>
+                <el-button @click='dialogTableVisible = false'>
+                    取消
+                </el-button>
+                <el-button
+                    type='primary'
+                    @click='handleTransfer'
                 >
+                    确定
+                </el-button>
             </span>
         </template>
     </el-dialog>
@@ -112,7 +144,8 @@ const dialogTableVisible = ref(false)
 const toAccount = ref('0xEd0f4bf5e21151dA45a1CA66Df30cbf695d92fBc')
 const amount = ref('')
 const abi = ref('')
-
+const signature = ref('')
+const sendData = ref('0xd9627aa40000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000002386f26fc100000000000000000000000000000000000000000000000000015817a685f9a1645c00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000002000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc20000000000000000000000006b175474e89094c44da98b954eedeac495271d0f869584cd000000000000000000000000100000000000000000000000000000000000001100000000000000000000000000000000000000000000001c2e352fd761f763ab')
 //onConnect()
 
 const handleWalletConnect = async function () {
@@ -283,6 +316,47 @@ const getABI = () => {
         })
 }
 
+//发送交易
+const sendTransaction = ()  => {
+    if (!web3.value) return ElMessage.warning('未连接钱包')
+    var message = {
+        from: userAddress.value,
+        data: sendData.value
+    }
+
+    web3.value.eth
+        .sendTransaction(message)
+        .on('transactionHash', function (hash) {
+            output.value = hash
+            dialogTableVisible.value = false
+            console.log('hash------------', hash)
+        })
+        .on('receipt', function (receipt) {
+            console.log('receipt------------', receipt)
+           
+        })
+        .on('confirmation', function (confirmationNumber, receipt) {
+            console.log('区块确认高度-----------', confirmationNumber, receipt)
+        })
+        .on('error', (error) => {
+            console.log('error----------', error)
+        })
+
+}
+
+//签名
+const sign = async () => {
+    if (!web3.value) return ElMessage.warning('未连接钱包')
+    const address = utils.toChecksumAddress(userAddress.value);
+
+    const message = "sign " + new Date().getTime();
+
+    signature.value = await web3.value.eth.personal.sign(message, address);
+    
+    console.log('sign------------', signature)
+    // signature.then((res) => {});
+}
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -295,6 +369,7 @@ const getABI = () => {
     @apply mr-1;
 }
 .result {
-    @apply bg-gray-50 shadow-xl mt-10 p-10 text-left w-2/3 m-auto border rounded-lg;
+    @apply bg-gray-50 shadow-xl mt-10 p-10 text-left w-6/12 m-auto border rounded-lg;
+    word-break: break-all;
 }
 </style>

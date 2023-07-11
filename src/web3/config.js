@@ -9,36 +9,36 @@ import Fortmatic from 'fortmatic';
 const { USDT_ADDRESS } = process.env.NODE_ENV === 'production' ? require('./constants') : require('./constants.dev');
 //
 const providerOptions = {
-  // https://docs.walletconnect.org/
-  walletconnect: {
-    package: WalletConnectProvider,
-    options: {
-      infuraId: '687e89f0d8a44f92ae2815a1d2649235', // TODO infuraId
+    // https://docs.walletconnect.org/
+    walletconnect: {
+        package: WalletConnectProvider,
+        options: {
+            infuraId: '687e89f0d8a44f92ae2815a1d2649235', // TODO infuraId
+        },
     },
-  },
-  // https://github.com/torusresearch/torus-embed#readme
-  torus: {
-    package: Torus,
-  },
-  // https://docs.fortmatic.com/
-  fortmatic: {
-    package: Fortmatic,
-    options: {
-      key: 'xxxxxxxxxx', // TODO key
+    // https://github.com/torusresearch/torus-embed#readme
+    torus: {
+        package: Torus,
     },
-  },
-  // https://docs.authereum.com/integration
-  authereum: {
-    package: Authereum,
-  },
-  // https://docs.bitski.com/
-  bitski: {
-    package: Bitski,
-    options: {
-      clientId: 'xxxxxxxxxx', // TODO
-      callbackUrl: `${window.location.href}bitski-callback.html`,
+    // https://docs.fortmatic.com/
+    fortmatic: {
+        package: Fortmatic,
+        options: {
+            key: 'xxxxxxxxxx', // TODO key
+        },
     },
-  },
+    // https://docs.authereum.com/integration
+    authereum: {
+        package: Authereum,
+    },
+    // https://docs.bitski.com/
+    bitski: {
+        package: Bitski,
+        options: {
+            clientId: 'xxxxxxxxxx', // TODO
+            callbackUrl: `${window.location.href}bitski-callback.html`,
+        },
+    },
 };
 
 export { USDT_ADDRESS, providerOptions };

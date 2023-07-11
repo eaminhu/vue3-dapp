@@ -2,10 +2,9 @@
     "extends": [
         "stylelint-config-standard",
         "stylelint-config-css-modules",
-        "stylelint-config-rational-order",
         "stylelint-no-unsupported-browser-features"
     ],
-    "plugins": ["stylelint-order", "stylelint-declaration-block-no-ignored-properties"],
+    "plugins": ["stylelint-declaration-block-no-ignored-properties"],
     "rules": {
         "no-descending-specificity": null,
         "function-calc-no-invalid": null,
@@ -58,15 +57,6 @@
         }],
         "at-rule-semicolon-newline-after": "always",
         "string-quotes": "single",
-        "order/order": [
-            {
-                "type": "at-rule",
-                "name": "include"
-            },
-            "declarations",
-            "rules",
-            "at-rules"
-        ],
         "rule-empty-line-before": "never"
     },
     "ignoreFiles": ["**/*.js", "**/*.jsx", "**/*.tsx", "**/*.ts"],
