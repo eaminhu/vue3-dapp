@@ -37,9 +37,9 @@
             <button class='oper-btn' @click='transfer'>
                 转账
             </button>
-            <button class='oper-btn' @click='getABI'>
+            <!-- <button class='oper-btn' @click='getABI'>
                 获取 ABI 文件
-            </button>
+            </button> -->
                
             <button class='oper-btn' @click='addToken'>
                 添加代币到小狐狸钱包
@@ -53,7 +53,69 @@
                 签名
             </button>
         </div>
-        <div class='w-6/12 mr-auto ml-auto mt-9'>
+        
+
+        <div v-loading='loading' class='result mb-6'>
+            <h3 class='text-center mb-6'>
+                根据合约地址交易
+            </h3>
+            <div class='w-12/12 mr-auto ml-auto mt-9'>
+                <el-form label-width='120px' :model='form'>
+                    <el-form-item label='合约地址'>
+                        <el-input v-model='form.contractAddress' />
+                    </el-form-item>
+                    <el-form-item label='執行方式'>
+                        <el-select v-model='form.type' placeholder='please select your zone'>
+                            <el-option
+                                key='1'
+                                label='Send'
+                                value='1'
+                            />
+                            <el-option
+                                key='2'
+                                label='Call'
+                                value='2'
+                            />
+                        </el-select>
+                    </el-form-item>
+                 
+                    <!-- <el-form-item label='ABI'>
+                        <el-input disabled v-model='form.abi' type='textarea' />
+                    </el-form-item> -->
+                    <el-form-item label='方法名'>
+                        <el-input v-model='form.methodName' />
+                    </el-form-item>
+                    <el-form-item label='参数'>
+                        <el-input
+                            v-model='form.params'
+                            placeholder='多个参数以逗号分隔' 
+                            rows='6'
+                            type='textarea'
+                        />
+                    </el-form-item>
+                    <el-form-item label='参数示例'>
+                        {{ form.exampleStr }}
+                    </el-form-item>
+                    <el-form-item label='返回结果'>
+                        <span class='text-green-500'>
+                            {{ form.result }} 
+                        </span>
+                    </el-form-item>
+                    <el-form-item label='错误消息'>
+                        <span class='text-red-500'>
+                            {{ form.error }} 
+                        </span>
+                    </el-form-item>
+                </el-form>
+                <div class='text-center'>
+                    <button class='oper-btn' @click='onSubmit'>
+                        开始交易
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- <div class='w-6/12 mr-auto ml-auto mt-9'>
             <el-input
                 v-model='sendData'
                 maxlength='5000'
@@ -65,8 +127,7 @@
             <button class='oper-btn' @click='sendTransaction'>
                 发送交易
             </button>
-        </div>
-
+        </div> -->
         <div v-loading='loading' class='result'>
             <p>
                 Address:
@@ -114,7 +175,7 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref,onMounted } from 'vue'
 import Web3, { utils } from 'web3'
 import Web3Modal from 'web3modal'
 import useWallet from '../hooks/useWallte'
@@ -146,11 +207,27 @@ const amount = ref('')
 const abi = ref('')
 const signature = ref('')
 const sendData = ref('0xd9627aa40000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000002386f26fc100000000000000000000000000000000000000000000000000015817a685f9a1645c00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000002000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc20000000000000000000000006b175474e89094c44da98b954eedeac495271d0f869584cd000000000000000000000000100000000000000000000000000000000000001100000000000000000000000000000000000000000000001c2e352fd761f763ab')
-//onConnect()
+const form = ref({
+    contractAddress: '0xcDCB434D576c5B1CF387cB272756199B7E72C44d',
+    methodName: 'openTrade',
+    abi: '',
+    type: '1',
+    params: '["0xc5C7b559B18BE4309212171F34bcfC25EF12B876","35","0","0","781000000000000000000","2316400000000",false,"30","2277793333333","0"],0,"0","10259931197","0x0000000000000000000000000000000000000000"',
+    exampleStr: '["0x38CB2168285C3A2153E341feDf24F08C2c4E49a6","35","0","0","781000000000000000000","2316400000000",false,"30","2277793333333","0"],0,"0","10259931197","0x0000000000000000000000000000000000000000"',
+    result: '',
+    error: '',
+})
+
+
 
 const handleWalletConnect = async function () {
     await onConnect()
 }
+
+onMounted(() => {
+    onConnect()
+})
+
 const close = async () => {
     resetApp()
 }
@@ -160,20 +237,80 @@ const getAccounts = async () => {
     console.log(accounts)
 }
 
+const onSubmit = () => {
+    
+    if (!web3.value) return ElMessage.warning('未连接钱包')
+    const netword = networkConfigs[networkId.value]
+    if (!netword.abiUrl) return ElMessage.warning('暂不支持该网络交易')
+    
+    //获取abi文件
+    if (!form.value.abi) {
+        var api =
+            `${netword.abiUrl}/api?module=contract&action=getabi&address=${form.value.contractAddress}`
+        axios
+            .get(api)
+            .then((res) => {
+                //请求成功的回调函数
+                if (Number(res.data.status) === 1) {
+                    const abi = JSON.parse(res.data.result)
+                    form.value.abi = abi
+                    handleContractMethod()
+                }else{
+                    form.value.result = res.data.message 
+                }
+            })
+            .catch((err) => {
+                //请求失败的回调函数
+                console.log(err)
+            })    
+    } else {
+        handleContractMethod()
+    }
+}
+
+// 调用合约方法
+const handleContractMethod = ()=>{
+    const {contractAddress,methodName,params} = form.value
+    const formattedStr = params.replace(/'/g, '"'); // 将单引号替换为双引号
+    const webParams = JSON.parse(`[${formattedStr}]`); // 解析为数组
+    // 实例化 myContract
+    try {             
+        const myContract = new web3.value.eth.Contract(form.value.abi, contractAddress); 
+        const methon =  myContract.methods[methodName](...webParams)
+
+        //根据用户选择的执行方式调用不同方法
+        if(form.value.type === '1'){
+            methon.send({from: userAddress.value}).on('transactionHash', function(hash){
+                form.value.result  = hash
+            }).on('confirmation', function(confirmationNumber, receipt){
+    
+            }).on('receipt', function(receipt){
+                // receipt 相关例子
+                console.log(receipt);
+                form.value.result  = receipt
+            }).on('error', function(error, receipt) { // 如果交易被网络拒绝并带有交易收据，则第二个参数将是交易收据。
+                form.value.result  = receipt
+                form.value.error = error
+            });  
+        }else{
+            methon.call({from: '0xde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe'}, function(error, result){
+                form.value.result = result
+            });
+        }
+        
+          
+    } catch (error) {
+        form.value.error  = error
+        console.log('%c [ error ]-235', 'font-size:13px; background:pink; color:#bf2c9f;', error) 
+    }
+}
+
 const handleTransfer = () => {
     var message = {
         to: toAccount.value,
         value: utils.toWei(amount.value),
         from: userAddress.value
     }
-
-    // web3.value.eth.sendTransaction(message, (err, res) => {
-    //     if (!err) {
-    //         output.value += res
-    //     } else {
-    //         output.value = 'Error'
-    //     }
-    // })
 
     web3.value.eth
         .sendTransaction(message)
@@ -207,7 +344,6 @@ const transfer = () => {
 const switchNetwork = (value) => {
     
     const chainId = utils.toHex(value)
-
     window.ethereum &&
         window.ethereum
             .request({
@@ -219,10 +355,12 @@ const switchNetwork = (value) => {
                 ]
             })
             .then(() => {
+                form.value.result = ''
                 networkSelectRef.value.blur()
                 ElMessage.success('网络切换成功')
             })
             .catch((e) => {
+                form.value.result = ''
                 ElMessageBox.confirm(e.message, {
                     confirmButtonText: 'OK',
                     cancelButtonText: 'Cancel',
@@ -363,6 +501,12 @@ const sign = async () => {
 <style scoped>
 .oper-btn {
     @apply mt-10 mr-2 shadow px-5 h-7 font-thin bg-yellow-300 rounded-sm;
+    &:hover{
+        @apply bg-yellow-400
+    }
+    &:active{
+        @apply bg-yellow-500
+    }
 }
 .icon-network {
     display: inline-block;

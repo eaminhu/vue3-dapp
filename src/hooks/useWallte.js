@@ -56,7 +56,7 @@ export default function UseWallet() {
     };
 
     const getAccountAssets = async () => {
-    /* 新版的方式 */
+        /* 新版的方式 */
         var web3Provider;
         if (window.ethereum) {
             web3Provider = window.ethereum;
