@@ -50,7 +50,7 @@
         </div>
         <div>
             <button class='oper-btn' @click='sign'>
-                签名
+                签名sign
             </button>
         </div>
         
