@@ -56,7 +56,7 @@
         
 
         <div v-loading='loading' class='result mb-6'>
-            <h3 class='text-center mb-7'>
+            <h3 class='text-center mb-6'>
                 根据合约地址交易
             </h3>
             <div class='w-12/12 mr-auto ml-auto mt-9'>
